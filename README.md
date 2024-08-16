@@ -90,7 +90,7 @@ The app should now be running on http://localhost:5173.
 
 Here is an overview of the project's folder structure:
 
-chatter/
+```chatter/
 │
 ├── public/
 │ ├── index.html
@@ -112,6 +112,7 @@ chatter/
 ├── package.json # Project dependencies and scripts
 ├── tailwind.config.js # TailwindCSS configuration
 └── tsconfig.json # TypeScript configuration
+```
 
 ## Deployment
 
