@@ -55,6 +55,33 @@ const Auth: React.FC<AuthProps> = ({ modal, setModal }) => {
     }
   };
 
+  const facebookAuth = async () => {
+    const navigate = useNavigate(); // Assuming you're using React Router for navigation
+
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const newUser = result.user;
+
+      const ref = doc(db, "users", newUser.uid);
+      const userDoc = await getDoc(ref);
+
+      if (!userDoc.exists()) {
+        await setDoc(ref, {
+          userId: newUser.uid,
+          username: newUser.displayName,
+          email: newUser.email,
+          userImg: newUser.photoURL,
+          bio: "",
+        });
+        navigate("/");
+        toast.success("User has been signed in");
+        setModal(false); // Assuming setModal is a state setter function to close a modal
+      }
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
+
   return (
     <Modal modal={modal} setModal={setModal}>
       <section
@@ -81,6 +108,7 @@ const Auth: React.FC<AuthProps> = ({ modal, setModal }) => {
                   text={`${createUser ? "Sign Up" : "Sign In"} With Google`}
                 />
                 <Button
+                  click={facebookAuth}
                   icon={<MdFacebook className="text-xl text-blue-600" />}
                   text={`${createUser ? "Sign Up" : "Sign In"} With Facebook`}
                 />
