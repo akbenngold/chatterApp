@@ -1,40 +1,55 @@
-import { addDoc, collection } from "firebase/firestore";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import React, { useEffect, useRef, useState } from "react";
 import { LiaTimesSolid } from "react-icons/lia";
 import ReactQuill from "react-quill";
 import TagsInput from "react-tagsinput";
 import { toast } from "react-toastify";
-import { db, storage } from "../../../firebase/firebase";
-import { Blog } from "../../../Context/Context";
+import { addDoc, collection } from "firebase/firestore";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { db, storage } from "../../../firebase/firebase.js";
+import { useBlog } from "../../../Context/Context";
 import { useNavigate } from "react-router-dom";
 
-const Preview = ({ setPublish, description, title }) => {
-  const imageRef = useRef(null);
-  const [imageUrl, setImageUrl] = useState("");
-  const [tags, setTags] = useState([]);
-  const [desc, setDesc] = useState("");
-  const { currentUser } = Blog();
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
+interface PreviewProps {
+  setPublish: (value: boolean) => void;
+  description: string;
+  title: string;
+}
 
-  const [preview, setPreview] = useState({
+interface PreviewState {
+  title: string;
+  photo: File | string;
+}
+
+const Preview: React.FC<PreviewProps> = ({
+  setPublish,
+  description,
+  title,
+}) => {
+  const imageRef = useRef<HTMLInputElement | null>(null);
+  const [imageUrl, setImageUrl] = useState<string>("");
+  const [tags, setTags] = useState<string[]>([]);
+  const [desc, setDesc] = useState<string>("");
+  const { currentUser } = useBlog();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const [preview, setPreview] = useState<PreviewState>({
     title: "",
     photo: "",
   });
 
   useEffect(() => {
     if (title || description) {
-      setPreview({ ...preview, title: title });
+      setPreview({ ...preview, title });
       setDesc(description);
     } else {
-      setPreview({ ...preview, title: "" });
+      setPreview({ title: "", photo: "" });
       setDesc("");
     }
   }, [title, description]);
 
   const handleClick = () => {
-    imageRef.current.click();
+    imageRef.current?.click();
   };
 
   const handleSubmit = async () => {
@@ -47,10 +62,13 @@ const Preview = ({ setPublish, description, title }) => {
 
       const collections = collection(db, "posts");
 
-      let url;
+      let url = "";
       if (imageUrl) {
-        const storageRef = ref(storage, `image/${preview.photo.name}`);
-        await uploadBytes(storageRef, preview?.photo);
+        const storageRef = ref(
+          storage,
+          `image/${(preview.photo as File).name}`
+        );
+        await uploadBytes(storageRef, preview.photo as File);
 
         url = await getDownloadURL(storageRef);
       }
@@ -64,6 +82,7 @@ const Preview = ({ setPublish, description, title }) => {
         created: Date.now(),
         pageViews: 0,
       });
+
       toast.success("Post has been added");
       navigate("/");
       setPublish(false);
@@ -71,12 +90,13 @@ const Preview = ({ setPublish, description, title }) => {
         title: "",
         photo: "",
       });
-    } catch (error) {
+    } catch (error: any) {
       toast.error(error.message);
     } finally {
       setLoading(false);
     }
   };
+
   return (
     <section className="absolute inset-0 bg-white z-30">
       <div className="size my-[2rem]">
@@ -100,8 +120,10 @@ const Preview = ({ setPublish, description, title }) => {
             </div>
             <input
               onChange={(e) => {
-                setImageUrl(URL.createObjectURL(e.target.files[0]));
-                setPreview({ ...preview, photo: e.target.files[0] });
+                if (e.target.files) {
+                  setImageUrl(URL.createObjectURL(e.target.files[0]));
+                  setPreview({ ...preview, photo: e.target.files[0] });
+                }
               }}
               ref={imageRef}
               type="file"
@@ -125,8 +147,9 @@ const Preview = ({ setPublish, description, title }) => {
             />
             <p className="text-gray-500 pt-4 text-sm">
               <span className="font-bold">Note:</span> Changes here will affect
-              how your story appears in public places like Medium’s homepage and
-              in subscribers’ inboxes — not the contents of the story itself.
+              how your story appears in public places like Chatter’s homepage
+              and in subscribers’ inboxes — not the contents of the story
+              itself.
             </p>
           </div>
           <div className="flex-[1] flex flex-col gap-4 mb-5 md:mb-0">

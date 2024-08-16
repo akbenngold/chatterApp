@@ -1,12 +1,18 @@
 import React, { useState } from "react";
 import { CiSearch } from "react-icons/ci";
 import Modal from "../../../utils/Modal";
-import { Blog } from "../../../Context/Context";
+import { useBlog } from "../../../Context/Context";
 import { useNavigate } from "react-router-dom";
 
-const Search = ({ modal, setModal }) => {
-  const [search, setSearch] = useState("");
-  const { postData } = Blog();
+// Define props types
+interface SearchProps {
+  modal: boolean;
+  setModal: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const Search: React.FC<SearchProps> = ({ modal, setModal }) => {
+  const [search, setSearch] = useState<string>("");
+  const { postData } = useBlog();
 
   const searchData = postData
     ? postData.filter(

@@ -1,16 +1,26 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import ReactQuill from "react-quill";
-import { Blog } from "../../../Context/Context";
+import { useBlog } from "../../../Context/Context";
 
-const EditPost = () => {
-  const { updateData, title, setTitle, description, setDescription } = Blog();
+// Define the types for the context
+interface BlogContextType {
+  updateData?: { title: string; description: string };
+  title: string;
+  setTitle: (title: string) => void;
+  description: string;
+  setDescription: (description: string) => void;
+}
+
+const EditPost: React.FC = () => {
+  const { updateData, title, setTitle, description, setDescription } =
+    useBlog() as BlogContextType;
 
   useEffect(() => {
     if (updateData) {
       setTitle(updateData.title);
       setDescription(updateData.description);
     }
-  }, [updateData]);
+  }, [updateData, setTitle, setDescription]);
 
   return (
     <section className="write w-[90%] md:w-[80%] lg:w-[60%] mx-auto py-[3rem]">

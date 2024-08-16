@@ -1,4 +1,42 @@
-export const nav = [
+// Types
+export type NavItem = {
+  title: string;
+  path: string;
+};
+
+export type DiscoverCategory = string;
+
+export type DiscoverAction = string;
+
+export type RecommendedPost = {
+  postId: number;
+  user: string;
+  title: string;
+  subtitle: string;
+  desc: string;
+  date: string;
+  readTime: string;
+  postImg: string;
+  userImg: string;
+};
+
+export type User = {
+  userId: number;
+  username: string;
+  bio: string;
+  userImg: string;
+};
+
+export type Comment = {
+  id: number;
+  username: string;
+  userImg: string;
+  text: string;
+  created: Date;
+};
+
+// Data
+export const nav: NavItem[] = [
   {
     title: "Our story",
     path: "/",
@@ -13,7 +51,7 @@ export const nav = [
   },
 ];
 
-export const discover = [
+export const discover: DiscoverCategory[] = [
   "Technology",
   "Study",
   "Programming",
@@ -25,7 +63,7 @@ export const discover = [
   "Politics",
 ];
 
-export const discoverActions = [
+export const discoverActions: DiscoverAction[] = [
   "Help",
   "Status",
   "Writers",
@@ -38,12 +76,11 @@ export const discoverActions = [
   "Teams",
 ];
 
-export const recommendedPosts = [
+export const recommendedPosts: RecommendedPost[] = [
   {
     postId: 1,
     user: "Tara Haelle",
-    title:
-      "We’re starting to understand more of what causes long COVID brain fog",
+    title: "We’re starting to understand more of what causes long COVID brain fog",
     subtitle: "Do this instead",
     desc: `Not only did a new study identify two blood proteins linked to cognitive difficulties a year 
     after COVID-19 infection, but the What is Lorem Ipsum?
@@ -75,16 +112,13 @@ export const recommendedPosts = [
     in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham.`,
     date: `Sep 13`,
     readTime: "7 min read",
-    postImg:
-      "https://miro.medium.com/v2/resize:fill:300:201/1*6nZUT6CkYE1frUF8eAVphw.jpeg",
-    userImg:
-      "https://fiverr-res.cloudinary.com/images/t_main1,q_auto,f_auto,q_auto,f_auto/gigs/142819271/original/09dafa4104fa6aeca4e62f33326be4933ae7ccac/create-cartoon-profile-picture-abd7.jpg",
+    postImg: "https://miro.medium.com/v2/resize:fill:300:201/1*6nZUT6CkYE1frUF8eAVphw.jpeg",
+    userImg: "https://fiverr-res.cloudinary.com/images/t_main1,q_auto,f_auto,q_auto,f_auto/gigs/142819271/original/09dafa4104fa6aeca4e62f33326be4933ae7ccac/create-cartoon-profile-picture-abd7.jpg",
   },
   {
     postId: 2,
     user: "Tara Haelle",
-    title:
-      "We’re starting to understand more of what causes long COVID brain fog",
+    title: "We’re starting to understand more of what causes long COVID brain fog",
     subtitle: "Do this instead",
     desc: `Not only did a new study identify two blood proteins linked to cognitive difficulties a year 
     after COVID-19 infection, but the What is Lorem Ipsum?
@@ -116,51 +150,44 @@ export const recommendedPosts = [
     in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham.`,
     date: `Sep 13`,
     readTime: "7 min read",
-    postImg:
-      "https://miro.medium.com/v2/resize:fill:300:201/1*6nZUT6CkYE1frUF8eAVphw.jpeg",
-    userImg:
-      "https://fiverr-res.cloudinary.com/images/t_main1,q_auto,f_auto,q_auto,f_auto/gigs/142819271/original/09dafa4104fa6aeca4e62f33326be4933ae7ccac/create-cartoon-profile-picture-abd7.jpg",
+    postImg: "https://miro.medium.com/v2/resize:fill:300:201/1*6nZUT6CkYE1frUF8eAVphw.jpeg",
+    userImg: "https://fiverr-res.cloudinary.com/images/t_main1,q_auto,f_auto,q_auto,f_auto/gigs/142819271/original/09dafa4104fa6aeca4e62f33326be4933ae7ccac/create-cartoon-profile-picture-abd7.jpg",
   },
 ];
 
-export const users = [
+export const users: User[] = [
   {
     userId: 1,
     username: "Benjamin Marie",
     bio: "Ph.D, research scientist in NLP/AI",
-    userImg:
-      "https://i.pinimg.com/736x/72/ea/af/72eaaf5c70436356bce53862c75c7eeb.jpg",
+    userImg: "https://i.pinimg.com/736x/72/ea/af/72eaaf5c70436356bce53862c75c7eeb.jpg",
   },
   {
     userId: 2,
     username: "Benjamin Marie",
     bio: "Ph.D, research scientist in NLP/AI",
-    userImg:
-      "https://i.pinimg.com/736x/72/ea/af/72eaaf5c70436356bce53862c75c7eeb.jpg",
+    userImg: "https://i.pinimg.com/736x/72/ea/af/72eaaf5c70436356bce53862c75c7eeb.jpg",
   },
   {
     userId: 3,
     username: "Benjamin Marie",
     bio: "Ph.D, research scientist in NLP/AI",
-    userImg:
-      "https://i.pinimg.com/736x/72/ea/af/72eaaf5c70436356bce53862c75c7eeb.jpg",
+    userImg: "https://i.pinimg.com/736x/72/ea/af/72eaaf5c70436356bce53862c75c7eeb.jpg",
   },
 ];
 
-export const comments = [
+export const comments: Comment[] = [
   {
     id: 1,
     username: "username",
-    userImg:
-      "https://i.pinimg.com/736x/72/ea/af/72eaaf5c70436356bce53862c75c7eeb.jpg",
+    userImg: "https://i.pinimg.com/736x/72/ea/af/72eaaf5c70436356bce53862c75c7eeb.jpg",
     text: "Nice post",
     created: new Date(),
   },
   {
     id: 2,
     username: "username",
-    userImg:
-      "https://i.pinimg.com/736x/72/ea/af/72eaaf5c70436356bce53862c75c7eeb.jpg",
+    userImg: "https://i.pinimg.com/736x/72/ea/af/72eaaf5c70436356bce53862c75c7eeb.jpg",
     text: "Nice post Lorem ipsum, dolor sit amet consectetur adipisicing elit. Exercitationem obcaecati totam officia doloremque est reprehenderit ipsam nam optio quisquam velit mollitia aliquid rem, eos repellat natus aliquam voluptatibus laborum, ratione assumenda earum. Beatae ratione recusandae laboriosam quo! Error quaerat esse tempore voluptatibus, aliquid possimus consequuntur doloremque mollitia dicta! Voluptate iure ut fugiat, animi quibusdam mollitia, necessitatibus laborum magnam facere cupiditate amet culpa aspernatur libero dolore porro expedita quia? Tempora modi perferendis natus impedit architecto, odio vitae! Impedit reiciendis, soluta laudantium non aut aliquid dolor. Omnis dolore eaque reiciendis eveniet, eius, facere eligendi ipsum atque iusto magnam deleniti blanditiis, corporis repudiandae?",
     created: new Date(),
   },

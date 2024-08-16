@@ -1,14 +1,27 @@
 import React from "react";
-import { Blog } from "../../Context/Context";
+import { useBlog } from "../../Context/Context";
 import { BsGraphUpArrow } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import { readTime } from "../../utils/helper";
 
-const Trending = () => {
-  const { postData } = Blog();
+interface Post {
+  id: string;
+  userId: string;
+  userImg: string;
+  username: string;
+  title: string;
+  desc: string;
+  created: Date;
+  pageViews: number;
+  // Add other properties if needed
+}
+
+const Trending: React.FC = () => {
+  const { postData } = useBlog();
   const getTrending =
-    postData && postData?.sort((a, b) => b.pageViews - a.pageViews);
+    postData && postData.sort((a: Post, b: Post) => b.pageViews - a.pageViews);
+
   return (
     <section className="border-b border-gray-600">
       <div className="size py-[2rem]">
@@ -31,8 +44,14 @@ const Trending = () => {
 
 export default Trending;
 
-const Trend = ({ trend, index }) => {
+interface TrendProps {
+  trend: Post;
+  index: number;
+}
+
+const Trend: React.FC<TrendProps> = ({ trend, index }) => {
   const navigate = useNavigate();
+
   return (
     <main className="flex gap-4 w-full">
       <span className="text-gray-400 text-4xl mt-4">{index + 1}</span>
@@ -40,7 +59,8 @@ const Trend = ({ trend, index }) => {
         <div className="flex items-center gap-2">
           <div
             onClick={() => navigate(`/profile/${trend?.userId}`)}
-            className="flex items-center gap-2 cursor-pointer hover:opacity-75">
+            className="flex items-center gap-2 cursor-pointer hover:opacity-75"
+          >
             <img
               className="w-[1.3rem] h-[1.3rem] object-cover rounded-full"
               src={trend?.userImg}
@@ -53,7 +73,8 @@ const Trend = ({ trend, index }) => {
         </div>
         <div
           onClick={() => navigate(`/post/${trend?.id}`)}
-          className="flex flex-col gap-4 cursor-pointer hover:opacity-75">
+          className="flex flex-col gap-4 cursor-pointer hover:opacity-75"
+        >
           <p className="w-full md:w-[18rem] text-md font-bold line-clamp-2">
             {trend.title}
           </p>

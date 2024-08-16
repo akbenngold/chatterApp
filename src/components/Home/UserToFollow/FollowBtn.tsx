@@ -1,24 +1,28 @@
 import React, { useEffect, useState } from "react";
-import { Blog } from "../../../Context/Context";
-import { db } from "../../../firebase/firebase";
+import { useBlog } from "../../../Context/Context";
+import { db } from "../../../firebase/firebase.js";
 import { toast } from "react-toastify";
 import { deleteDoc, doc, setDoc } from "firebase/firestore";
 import useSingleFetch from "../../hooks/useSingleFetch";
 import { useLocation } from "react-router-dom";
 
-const FollowBtn = ({ userId }) => {
-  const [isFollowed, setIsFollowed] = useState(false);
-  const { currentUser } = Blog();
+interface FollowBtnProps {
+  userId: string;
+}
 
-  const { data, loading } = useSingleFetch(
-    "users",
-    currentUser?.uid,
-    "follows"
-  );
+const FollowBtn: React.FC<FollowBtnProps> = ({ userId }) => {
+  const [isFollowed, setIsFollowed] = useState<boolean>(false);
+  const { currentUser } = useBlog();
+
+  const { data } = useSingleFetch("users", currentUser?.uid, "follows");
 
   useEffect(() => {
-    setIsFollowed(data && data?.findIndex((item) => item.id === userId) !== -1);
-  }, [data]);
+    if (data) {
+      setIsFollowed(
+        data.findIndex((item: { id: string }) => item.id === userId) !== -1
+      );
+    }
+  }, [data, userId]);
 
   const handleFollow = async () => {
     try {
@@ -31,21 +35,18 @@ const FollowBtn = ({ userId }) => {
           "followers",
           currentUser?.uid
         );
+
         if (isFollowed) {
           await deleteDoc(followRef);
           await deleteDoc(followerRef);
-          toast.success("User is unFollowed");
+          toast.success("User is unfollowed");
         } else {
-          await setDoc(followRef, {
-            userId: userId,
-          });
-          await setDoc(followerRef, {
-            userId: userId,
-          });
-          toast.success("User is Followed");
+          await setDoc(followRef, { userId });
+          await setDoc(followerRef, { userId });
+          toast.success("User is followed");
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       toast.error(error.message);
     }
   };
@@ -53,16 +54,16 @@ const FollowBtn = ({ userId }) => {
   const { pathname } = useLocation();
 
   return (
-    <>
-      <button
-        onClick={handleFollow}
-        className={`${
-          pathname === "/" ? "border border-black" : ""
-        } px-3 py-[0.2rem] rounded-full
-        ${isFollowed ? "text-gray-500 border-none" : ""}`}>
-        {isFollowed ? "Following" : "Follow"}
-      </button>
-    </>
+    <button
+      onClick={handleFollow}
+      className={`${
+        pathname === "/" ? "border border-black" : ""
+      } px-3 py-[0.2rem] rounded-full ${
+        isFollowed ? "text-gray-500 border-none" : ""
+      }`}
+    >
+      {isFollowed ? "Following" : "Follow"}
+    </button>
   );
 };
 

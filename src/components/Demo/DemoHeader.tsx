@@ -2,26 +2,30 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { nav } from "../../data";
 import Auth from "./Auth/Auth";
-import { Blog } from "../../Context/Context";
+import { useBlog } from "../../Context/Context";
 
-const DemoHeader = () => {
-  const [isActive, setIsActive] = useState(false);
-  const { authModel, setAuthModel } = Blog();
+const DemoHeader: React.FC = () => {
+  const [isActive, setIsActive] = useState<boolean>(false);
+  const { authModel, setAuthModel } = useBlog();
 
   useEffect(() => {
     const scrollMe = () => {
       window.scrollY > 50 ? setIsActive(true) : setIsActive(false);
     };
     window.addEventListener("scroll", scrollMe);
+    return () => {
+      window.removeEventListener("scroll", scrollMe);
+    };
   }, []);
+
   return (
     <header
       className={`border-b border-black sticky top-0 z-50 
-    ${isActive ? "bg-white" : "bg-banner"}
-    transition-all duration-500`}
+      ${isActive ? "bg-white" : "bg-banner"} 
+      transition-all duration-500`}
     >
       <div className="size h-[70px] flex items-center justify-between">
-        <Link to={"/"} className="text-3xl">
+        <Link to="/" className="text-3xl">
           CHATTER
         </Link>
         <div className="flex items-center gap-5">

@@ -2,18 +2,20 @@ import React from "react";
 import { discover, discoverActions } from "../../data";
 import { useNavigate } from "react-router-dom";
 
-const Discover = () => {
+const Discover: React.FC = () => {
   const navigate = useNavigate();
+
   return (
     <div className="sticky top-[6rem]">
       <div className="border-b border-gray-400 pb-7">
         <h2 className="font-semibold">Discover more of what matters to you</h2>
         <div className="my-2 flex items-center gap-3 flex-wrap">
-          {discover.map((item, i) => (
+          {discover.map((item: string, i: number) => (
             <button
               onClick={() => navigate(`/filter/${item.toLowerCase()}`)}
               key={i}
-              className="bg-gray-200 py-2 px-3 text-sm rounded-full">
+              className="bg-gray-200 py-2 px-3 text-sm rounded-full"
+            >
               {item}
             </button>
           ))}
@@ -23,7 +25,7 @@ const Discover = () => {
         </button>
       </div>
       <div className="flex items-center flex-wrap gap-3 leading-3 pt-8">
-        {discoverActions.map((item, i) => (
+        {discoverActions.map((item: string, i: number) => (
           <button key={i} className="text-md text-black1">
             {item}
           </button>

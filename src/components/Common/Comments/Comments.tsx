@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Modal from "../../../utils/Modal";
 import { LiaTimesSolid } from "react-icons/lia";
-import { Blog } from "../../../Context/Context";
+import { useBlog } from "../../../Context/Context";
 import { toast } from "react-toastify";
 import { addDoc, collection } from "firebase/firestore";
 import { db } from "../../../firebase/firebase";
@@ -9,17 +9,39 @@ import useSingleFetch from "../../hooks/useSingleFetch";
 import Loading from "../../Loading/Loading";
 import Comment from "./Comment";
 
-const Comments = ({ postId }) => {
+// Type Definitions
+interface CommentsProps {
+  postId: string;
+}
+
+interface User {
+  id: string;
+  username: string;
+  userImg?: string;
+}
+
+interface CommentData {
+  id: string;
+  userId: string;
+  commentText: string;
+  created: number;
+}
+
+// Component
+const Comments: React.FC<CommentsProps> = ({ postId }) => {
   const {
     currentUser,
     allUsers,
     showComment,
     setShowComment,
     setCommentLength,
-  } = Blog();
-  const [comment, setComment] = useState("");
+  } = useBlog();
 
-  const getUserData = allUsers.find((user) => user.id === currentUser?.uid);
+  const [comment, setComment] = useState<string>("");
+
+  const getUserData = allUsers.find(
+    (user: User) => user.id === currentUser?.uid
+  );
 
   const { data, loading } = useSingleFetch("posts", postId, "comments");
 
@@ -27,6 +49,7 @@ const Comments = ({ postId }) => {
     try {
       if (comment === "") {
         toast.error("The input must be filled.");
+        return;
       }
 
       const commentRef = collection(db, "posts", postId, "comments");
@@ -37,7 +60,7 @@ const Comments = ({ postId }) => {
       });
       toast.success("Comment has been added");
       setComment("");
-    } catch (error) {
+    } catch (error: any) {
       toast.error(error.message);
     }
   };
@@ -46,7 +69,7 @@ const Comments = ({ postId }) => {
     if (data) {
       setCommentLength(data.length);
     }
-  }, [data]);
+  }, [data, setCommentLength]);
 
   return (
     <Modal setModal={setShowComment} modal={showComment}>
@@ -54,10 +77,11 @@ const Comments = ({ postId }) => {
         className={`fixed top-0 right-0 bottom-0 z-50 bg-white w-[22rem] shadows p-5
         overflow-y-auto transition-all duration-500
         ${showComment ? "translate-x-0" : "translate-x-[23rem]"}
-      `}>
+      `}
+      >
         {/* header  */}
         <div className="flex items-center justify-between">
-          <h3 className="text-xl font-bold">Responses({data.length})</h3>
+          <h3 className="text-xl font-bold">Responses({data?.length ?? 0})</h3>
           <button onClick={() => setShowComment(false)} className="text-xl">
             <LiaTimesSolid />
           </button>
@@ -77,14 +101,16 @@ const Comments = ({ postId }) => {
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               placeholder="What are your thoughts?"
-              className="w-full outline-none resize-none text-sm border px-2 pt-4"></textarea>
+              className="w-full outline-none resize-none text-sm border px-2 pt-4"
+            ></textarea>
             <div className="flex items-center justify-end gap-4 mt-[1rem]">
               <button onClick={() => setComment("")} className="text-sm">
                 Cancel
               </button>
               <button
                 onClick={writeComment}
-                className="btn !text-xs !bg-green-700 !text-white !rounded-full">
+                className="btn !text-xs !bg-green-700 !text-white !rounded-full"
+              >
                 Response
               </button>
             </div>
@@ -95,9 +121,9 @@ const Comments = ({ postId }) => {
         ) : (
           <div className="border-t py-4 mt-8 flex flex-col gap-8">
             {data &&
-              data.map((item, i) =>
+              data.map((item: CommentData, i: number) =>
                 loading ? (
-                  <Loading />
+                  <Loading key={i} />
                 ) : (
                   <Comment item={item} postId={postId} key={i} />
                 )

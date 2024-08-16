@@ -4,7 +4,7 @@ import Trending from "./Trending";
 import Posts from "../Common/Posts/Posts";
 import Discover from "./Discover";
 
-const Demo = () => {
+const Demo: React.FC = () => {
   return (
     <>
       <Banner />

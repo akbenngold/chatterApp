@@ -14,8 +14,15 @@ import {
 } from "react-icons/bi";
 import { toast } from "react-toastify";
 
-const SharePost = () => {
-  const [showDrop, setShowDrop] = useState(false);
+// Define types for the Button component props
+interface ButtonProps {
+  click?: () => void;
+  icon: React.ReactNode;
+  title: string;
+}
+
+const SharePost: React.FC = () => {
+  const [showDrop, setShowDrop] = useState<boolean>(false);
   const path = window.location.href;
 
   const copyLink = async () => {
@@ -23,11 +30,12 @@ const SharePost = () => {
       await navigator.clipboard.writeText(path);
       toast.success("Link has been copied");
       setShowDrop(false);
-    } catch (error) {
+    } catch (error: any) {
       toast.error(error.message);
       setShowDrop(false);
     }
   };
+
   return (
     <div className="relative">
       <button onClick={() => setShowDrop(!showDrop)}>
@@ -51,12 +59,12 @@ const SharePost = () => {
 
 export default SharePost;
 
-const Button = ({ click, icon, title }) => {
+const Button: React.FC<ButtonProps> = ({ click, icon, title }) => {
   return (
     <button
       onClick={click}
-      className="p-2 hover:bg-gray-200 hover:text-black/80 w-full text-sm text-left
-      flex items-center gap-2 cursor-pointer text-gray-500">
+      className="p-2 hover:bg-gray-200 hover:text-black/80 w-full text-sm text-left flex items-center gap-2 cursor-pointer text-gray-500"
+    >
       <span className="text-[1.2rem]">{icon}</span>
       {title}
     </button>

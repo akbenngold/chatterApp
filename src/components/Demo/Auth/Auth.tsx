@@ -7,14 +7,27 @@ import { AiOutlineMail } from "react-icons/ai";
 import SignIn from "./SignIn";
 import SignUp from "./SignUp";
 import { signInWithPopup } from "firebase/auth";
-import { auth, db, provider } from "../../../firebase/firebase";
+import { auth, db, provider } from "../../../firebase/firebase.js";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-const Auth = ({ modal, setModal }) => {
-  const [createUser, setCreateUser] = useState(false);
-  const [signReq, setSignReq] = useState("");
+// Define the prop types for Auth component
+interface AuthProps {
+  modal: boolean;
+  setModal: (value: boolean) => void;
+}
+
+// Define the Button component prop types
+interface ButtonProps {
+  icon: React.ReactNode;
+  text: string;
+  click?: () => void;
+}
+
+const Auth: React.FC<AuthProps> = ({ modal, setModal }) => {
+  const [createUser, setCreateUser] = useState<boolean>(false);
+  const [signReq, setSignReq] = useState<"" | "sign-in" | "sign-up">("");
   const navigate = useNavigate();
 
   const googleAuth = async () => {
@@ -34,10 +47,10 @@ const Auth = ({ modal, setModal }) => {
           bio: "",
         });
         navigate("/");
-        toast.success("User have been Signed in");
+        toast.success("User has been signed in");
         setModal(false);
       }
-    } catch (error) {
+    } catch (error: any) {
       toast.error(error.message);
     }
   };
@@ -100,7 +113,8 @@ const Auth = ({ modal, setModal }) => {
 
 export default Auth;
 
-const Button = ({ icon, text, click }) => {
+// Button component
+const Button: React.FC<ButtonProps> = ({ icon, text, click }) => {
   return (
     <button
       onClick={click}

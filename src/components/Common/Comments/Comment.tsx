@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Blog } from "../../../Context/Context";
+import { useBlog } from "../../../Context/Context";
 import moment from "moment";
 import { BiDotsHorizontalRounded } from "react-icons/bi";
 import DropDown from "../../../utils/DropDown";
@@ -7,15 +7,36 @@ import { deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { db } from "../../../firebase/firebase";
 import { toast } from "react-toastify";
 
-const Comment = ({ item: comment, postId }) => {
-  const { allUsers, currentUser } = Blog();
-  const [drop, setDrop] = useState(false);
-  const [more, setMore] = useState(false);
-  const [isEdit, setIsEdit] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const getUserData = allUsers.find((user) => user.id === comment?.userId);
+// Type for Comment Props
+interface CommentProps {
+  item: {
+    id: string;
+    userId: string;
+    commentText: string;
+    created: number;
+  };
+  postId: string;
+}
 
-  const [editComment, setEditComment] = useState("");
+// Type for User
+interface User {
+  id: string;
+  username: string;
+  userImg?: string;
+}
+
+// Component
+const Comment: React.FC<CommentProps> = ({ item: comment, postId }) => {
+  const { allUsers, currentUser } = useBlog();
+  const [drop, setDrop] = useState<boolean>(false);
+  const [more, setMore] = useState<boolean>(false);
+  const [isEdit, setIsEdit] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [editComment, setEditComment] = useState<string>("");
+
+  const getUserData = allUsers.find(
+    (user: User) => user.id === comment?.userId
+  );
 
   const { userId, commentText, created } = comment;
 
@@ -25,7 +46,7 @@ const Comment = ({ item: comment, postId }) => {
       await deleteDoc(ref);
       setDrop(false);
       toast.success("Comment has been removed");
-    } catch (error) {
+    } catch (error: any) {
       toast.error(error.message);
     }
   };
@@ -37,20 +58,25 @@ const Comment = ({ item: comment, postId }) => {
   };
 
   const handleEdit = async () => {
+    if (!editComment.trim()) {
+      toast.error("Comment cannot be empty");
+      return;
+    }
+
     setLoading(true);
     try {
       const ref = doc(db, "posts", postId, "comments", comment.id);
       await updateDoc(ref, {
         commentText: editComment,
-        create: Date.now(),
+        created: Date.now(),
         userId: currentUser?.uid,
       });
       setEditComment("");
       setIsEdit(false);
       setDrop(false);
       toast.success("Comment has been updated");
-    } catch (error) {
-      toast.success(error.message);
+    } catch (error: any) {
+      toast.error(error.message);
     } finally {
       setLoading(false);
     }
@@ -78,13 +104,15 @@ const Comment = ({ item: comment, postId }) => {
                   <>
                     <button
                       onClick={() => setDrop(!drop)}
-                      className="text-2xl hover:opacity-70">
+                      className="text-2xl hover:opacity-70"
+                    >
                       <BiDotsHorizontalRounded />
                     </button>
                     <DropDown
                       showDrop={drop}
                       setShowDrop={setDrop}
-                      size="w-[10rem]">
+                      size="w-[10rem]"
+                    >
                       <Button
                         click={editCommentText}
                         title="Edit this response"
@@ -111,14 +139,16 @@ const Comment = ({ item: comment, postId }) => {
             value={editComment}
             onChange={(e) => setEditComment(e.target.value)}
             placeholder="Write your update text..."
-            className="w-full resize-none outline-none text-sm"></textarea>
+            className="w-full resize-none outline-none text-sm"
+          ></textarea>
           <div className="flex items-center justify-end gap-2">
             <button onClick={() => setIsEdit(false)} className="w-fit text-sm">
               Cancel
             </button>
             <button
               onClick={handleEdit}
-              className="btn !text-white !bg-green-700 !rounded-full !text-xs">
+              className="btn !text-white !bg-green-700 !rounded-full !text-xs"
+            >
               {loading ? "Updating..." : "Update"}
             </button>
           </div>
@@ -130,11 +160,18 @@ const Comment = ({ item: comment, postId }) => {
 
 export default Comment;
 
-const Button = ({ click, title }) => {
+// Button Component with TypeScript
+interface ButtonProps {
+  click: () => void;
+  title: string;
+}
+
+const Button: React.FC<ButtonProps> = ({ click, title }) => {
   return (
     <button
       onClick={click}
-      className="p-2 hover:bg-gray-200 text-black/80 w-full text-sm text-left">
+      className="p-2 hover:bg-gray-200 text-black/80 w-full text-sm text-left"
+    >
       {title}
     </button>
   );

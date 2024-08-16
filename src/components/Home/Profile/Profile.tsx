@@ -7,14 +7,31 @@ import { LiaTimesSolid } from "react-icons/lia";
 import { IoSettingsSharp } from "react-icons/io5";
 import { discoverActions } from "../../../data";
 import EditProfile from "./EditProfile";
-import { Blog } from "../../../Context/Context";
+import { useBlog } from "../../../Context/Context";
 import { useParams } from "react-router-dom";
 import useSingleFetch from "../../hooks/useSingleFetch";
 
-const Profile = () => {
-  const { allUsers, currentUser } = Blog();
-  const { userId } = useParams();
-  const activities = [
+interface User {
+  id: string;
+  uid: string;
+  username: string;
+  userImg?: string;
+  bio?: string;
+}
+
+interface Activity {
+  title: string;
+  comp: React.FC<{
+    getUserData: User | undefined;
+    setEditModal: React.Dispatch<React.SetStateAction<boolean>>;
+  }>;
+}
+
+const Profile: React.FC = () => {
+  const { allUsers, currentUser } = useBlog();
+  const { userId } = useParams<{ userId: string }>();
+
+  const activities: Activity[] = [
     {
       title: "Home",
       comp: ProfileHome,
@@ -28,11 +45,12 @@ const Profile = () => {
       comp: ProfileAbout,
     },
   ];
-  const [currentActive, setCurrentActive] = useState(activities[0]);
-  const [modal, setModal] = useState(false);
-  const [editModal, setEditModal] = useState(false);
 
-  const getUserData = allUsers.find((user) => user.id === userId);
+  const [currentActive, setCurrentActive] = useState<Activity>(activities[0]);
+  const [modal, setModal] = useState<boolean>(false);
+  const [editModal, setEditModal] = useState<boolean>(false);
+
+  const getUserData = allUsers.find((user: User) => user.id === userId);
 
   const { data: follows } = useSingleFetch("users", userId, "follows");
   const { data: followers } = useSingleFetch("users", userId, "followers");
@@ -56,13 +74,12 @@ const Profile = () => {
           {activities.map((item, i) => (
             <div
               key={i}
-              className={`py-[0.5rem]
-            ${
-              item.title === currentActive.title
-                ? "border-b border-gray-500"
-                : ""
-            }
-            `}>
+              className={`py-[0.5rem] ${
+                item.title === currentActive.title
+                  ? "border-b border-gray-500"
+                  : ""
+              }`}
+            >
               <button onClick={() => setCurrentActive(item)}>
                 {item.title}
               </button>
@@ -78,7 +95,8 @@ const Profile = () => {
       <button
         onClick={() => setModal(true)}
         className="fixed top-[8rem] right-0 w-[2rem] h-[2rem] bg-black text-white
-        grid place-items-center md:hidden">
+        grid place-items-center md:hidden"
+      >
         <IoSettingsSharp />
       </button>
       {/* user details  */}
@@ -87,12 +105,14 @@ const Profile = () => {
           className={`flex-[1] border-l border-gray-300 p-[2rem] z-10
         fixed right-0 bottom-0 top-0 w-[18rem] bg-white md:sticky
         ${modal ? "translate-x-0" : "translate-x-[100%] md:translate-x-0"}
-        transition-all duration-500`}>
+        transition-all duration-500`}
+        >
           {/* icons to close out modal  */}
           <div className="pb-4 text-right">
             <button
               onClick={() => setModal(false)}
-              className="inline-block md:hidden">
+              className="inline-block md:hidden"
+            >
               <LiaTimesSolid />
             </button>
           </div>
@@ -109,10 +129,11 @@ const Profile = () => {
             <p className="text-gray-500 first-letter:uppercase text-sm">
               {getUserData?.bio}
             </p>
-            {currentUser?.uid === getUserData?.userId && (
+            {currentUser?.uid === getUserData?.uid && (
               <button
                 onClick={() => setEditModal(true)}
-                className="text-green-700 pt-6 text-sm w-fit">
+                className="text-green-700 pt-6 text-sm w-fit"
+              >
                 Edit Profile
               </button>
             )}

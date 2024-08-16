@@ -2,19 +2,32 @@ import React, { useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
 import DropDown from "../../../../utils/DropDown";
 import { useNavigate } from "react-router-dom";
-import { Blog } from "../../../../Context/Context";
+import { useBlog } from "../../../../Context/Context";
 import { deleteDoc, doc } from "firebase/firestore";
 import { db } from "../../../../firebase/firebase";
 import { toast } from "react-toastify";
 
-const Actions = ({ postId, title, desc }) => {
-  const { setUpdateData, currentUser } = Blog();
-  const [showDrop, setShowDrop] = useState(false);
+// Type Definitions
+interface ActionsProps {
+  postId: string;
+  title: string;
+  desc: string;
+}
+
+interface ButtonProps {
+  click: () => void;
+  title: string;
+}
+
+const Actions: React.FC<ActionsProps> = ({ postId, title, desc }) => {
+  const { setUpdateData, currentUser } = useBlog();
+  const [showDrop, setShowDrop] = useState<boolean>(false);
+
+  const navigate = useNavigate();
+
   const handleClick = () => {
     setShowDrop(!showDrop);
   };
-
-  const navigate = useNavigate(null);
 
   const handleEdit = () => {
     navigate(`/editPost/${postId}`);
@@ -24,12 +37,18 @@ const Actions = ({ postId, title, desc }) => {
   const handleRemove = async () => {
     try {
       const ref = doc(db, "posts", postId);
-      const likeRef = doc(db, "posts", postId, "likes", currentUser?.uid);
-      const commentRef = doc(db, "posts", postId, "comments", currentUser?.uid);
+      const likeRef = doc(db, "posts", postId, "likes", currentUser?.uid || "");
+      const commentRef = doc(
+        db,
+        "posts",
+        postId,
+        "comments",
+        currentUser?.uid || ""
+      );
       const savedPostRef = doc(
         db,
         "users",
-        currentUser?.uid,
+        currentUser?.uid || "",
         "savedPost",
         postId
       );
@@ -38,13 +57,14 @@ const Actions = ({ postId, title, desc }) => {
       await deleteDoc(commentRef);
       await deleteDoc(savedPostRef);
 
-      toast.success("post has been removed");
+      toast.success("Post has been removed");
       setShowDrop(false);
       navigate("/");
-    } catch (error) {
-      toast.success(error.message);
+    } catch (error: any) {
+      toast.error(error.message);
     }
   };
+
   return (
     <div className="relative">
       <button onClick={handleClick}>
@@ -60,13 +80,14 @@ const Actions = ({ postId, title, desc }) => {
 
 export default Actions;
 
-const Button = ({ click, title }) => {
+const Button: React.FC<ButtonProps> = ({ click, title }) => {
   return (
     <button
       onClick={click}
       className={`p-2 hover:bg-gray-100 hover:text-black/80 w-full text-sm text-left
     ${title === "Delete Story" ? "text-red-600" : ""}
-    `}>
+    `}
+    >
       {title}
     </button>
   );

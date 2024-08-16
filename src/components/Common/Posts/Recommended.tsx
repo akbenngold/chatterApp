@@ -1,15 +1,22 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Blog } from "../../../Context/Context";
+import { useBlog } from "../../../Context/Context";
 
-const Recommended = () => {
-  const { postData } = Blog();
+// Define the shape of post data
+interface PostData {
+  id: string;
+  title?: string;
+  desc?: string;
+}
+
+const Recommended: React.FC = () => {
+  const { postData } = useBlog();
   const navigate = useNavigate();
 
   return (
     <div>
       {postData && postData.length > 0 ? (
-        postData.forEach((post) => {
+        postData.map((post: PostData) => {
           // Check if post and post.id are defined
           if (post && post.id) {
             return (

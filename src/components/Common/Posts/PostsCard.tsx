@@ -2,11 +2,27 @@ import React from "react";
 import { readTime } from "../../../utils/helper";
 import moment from "moment";
 import SavedPost from "./Actions/SavedPost";
-import { Blog } from "../../../Context/Context";
+import { useBlog } from "../../../Context/Context";
 import Actions from "./Actions/Actions";
 import { useNavigate } from "react-router-dom";
 
-const PostsCard = ({ post }) => {
+// Define types for the post prop
+interface Post {
+  id: string;
+  title: string;
+  desc: string;
+  created: Date;
+  postImg?: string;
+  userId: string;
+  username: string;
+  [key: string]: any; // Allow additional properties
+}
+
+interface PostsCardProps {
+  post: Post | null;
+}
+
+const PostsCard: React.FC<PostsCardProps> = ({ post }) => {
   // Check if the post is undefined or null
   if (!post) {
     return null; // Or return a placeholder/fallback UI
@@ -14,7 +30,7 @@ const PostsCard = ({ post }) => {
 
   // Destructure the post object safely
   const { title, desc, created, postImg, id: postId, userId, username } = post;
-  const { currentUser } = Blog();
+  const { currentUser } = useBlog();
 
   const navigate = useNavigate();
 

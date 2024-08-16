@@ -8,18 +8,18 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import Search from "./Search";
 import Modal from "../../../utils/Modal";
 import UserModal from "./UserModal";
-import { Blog } from "../../../Context/Context";
+import { useBlog } from "../../../Context/Context";
 import Loading from "../../Loading/Loading";
 import { doc, updateDoc } from "firebase/firestore";
-import { db } from "../../../firebase/firebase";
+import { db } from "../../../firebase/firebase.js";
 import { toast } from "react-toastify";
 
-const HomeHeader = () => {
+const HomeHeader: React.FC = () => {
   const { allUsers, userLoading, currentUser, setPublish, title, description } =
-    Blog();
-  const [modal, setModal] = useState(false);
-  const [searchModal, setSearchModal] = useState(false);
-  const [loading, setLoading] = useState(false);
+    useBlog();
+  const [modal, setModal] = useState<boolean>(false);
+  const [searchModal, setSearchModal] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const { pathname } = useLocation();
   const getUserData = allUsers?.find((user) => user.id === currentUser?.uid);
@@ -27,7 +27,7 @@ const HomeHeader = () => {
   const editPath = pathname.split("/")[1];
   const postId = pathname.split("/")[2];
 
-  const navigate = useNavigate(null);
+  const navigate = useNavigate();
 
   const handleEdit = async () => {
     try {
@@ -40,6 +40,7 @@ const HomeHeader = () => {
       navigate(`/post/${postId}`);
       toast.success("Post has been updated");
     } catch (error) {
+      toast.error("Failed to update post");
     } finally {
       setLoading(false);
     }
@@ -49,14 +50,14 @@ const HomeHeader = () => {
     <header className="border-b border-gray-200">
       {userLoading && <Loading />}
       <div className="size h-[60px] flex items-center justify-between">
-        {/* left side  */}
+        {/* left side */}
         <div className="flex items-center gap-3">
           <Link to={"/"}>
             <span className="text-3xl">CHATTER</span>
           </Link>
           <Search modal={searchModal} setModal={setSearchModal} />
         </div>
-        {/* right side  */}
+        {/* right side */}
         <div className="flex items-center gap-3 sm:gap-7">
           <span
             onClick={() => setSearchModal(true)}

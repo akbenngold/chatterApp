@@ -1,6 +1,6 @@
 import React from "react";
 
-const Banner = () => {
+const Banner: React.FC = () => {
   return (
     <div className="bg-banner border-b border-black">
       <div className="size py-[5rem] flex flex-col items-start gap-[1rem]">

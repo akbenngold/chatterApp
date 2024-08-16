@@ -1,14 +1,21 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import { Blog } from "../../Context/Context";
+import { useBlog } from "../../Context/Context";
 import Loading from "../Loading/Loading";
 import PostsCard from "../Common/Posts/PostsCard";
 
-const FilterPost = () => {
-  const { tag } = useParams();
-  const { postData, postLoading } = Blog();
+interface Post {
+  tags: string[];
+  // Add other properties of `Post` as needed
+}
 
-  const filteredData = postData.filter((post) => post.tags.includes(tag));
+const FilterPost: React.FC = () => {
+  const { tag } = useParams<{ tag: string }>();
+  const { postData, postLoading } = useBlog();
+
+  const filteredData = postData.filter((post: Post) =>
+    post.tags.includes(tag || "")
+  );
 
   return (
     <section className="size my-[2rem]">

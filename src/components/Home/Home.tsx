@@ -2,7 +2,7 @@ import React from "react";
 import Posts from "../Common/Posts/Posts";
 import Follow from "./UserToFollow/Follow";
 
-const Home = () => {
+const Home: React.FC = () => {
   return (
     <section className="size flex gap-[5rem] relative">
       <div className="flex-[2] py-10 mb-[4rem]">

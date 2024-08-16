@@ -4,16 +4,29 @@ import { MdOutlineLocalLibrary } from "react-icons/md";
 import { BiSpreadsheet } from "react-icons/bi";
 import { HiOutlineChartBar } from "react-icons/hi";
 import { LiaEditSolid } from "react-icons/lia";
-import { Blog } from "../../../Context/Context";
+import { useBlog } from "../../../Context/Context";
 import { Link, useNavigate } from "react-router-dom";
 import { secretEmail } from "../../../utils/helper";
 import { signOut } from "firebase/auth";
-import { auth } from "../../../firebase/firebase";
+import { auth } from "../../../firebase/firebase.js";
 import { toast } from "react-toastify";
 
-const UserModal = ({ setModal }) => {
-  const { currentUser } = Blog();
-  const userModal = [
+// Define the prop types for the UserModal component
+interface UserModalProps {
+  setModal: (value: boolean) => void;
+}
+
+const UserModal: React.FC<UserModalProps> = ({ setModal }) => {
+  const { currentUser } = useBlog();
+
+  // Define the type for userModal items
+  interface UserModalItem {
+    title: string;
+    icon: JSX.Element;
+    path: string;
+  }
+
+  const userModal: UserModalItem[] = [
     {
       title: "Profile",
       icon: <LiaUserSolid />,
@@ -36,23 +49,27 @@ const UserModal = ({ setModal }) => {
     },
   ];
 
-  const navigate = useNavigate(null);
+  const navigate = useNavigate();
+
   const logout = async () => {
     try {
       await signOut(auth);
       navigate("/demo");
-      toast.success("User has be logged out");
-    } catch (error) {
+      toast.success("User has been logged out");
+    } catch (error: any) {
       toast.error(error.message);
     }
   };
+
   return (
     <section
       className="absolute w-[18rem] p-6 bg-white right-0 top-[100%]
-    shadows rounded-md z-50 text-gray-500">
+      shadows rounded-md z-50 text-gray-500"
+    >
       <Link
         to="/write"
-        className="flex md:hidden items-center gap-1 text-gray-500">
+        className="flex md:hidden items-center gap-1 text-gray-500"
+      >
         <span className="text-3xl">
           <LiaEditSolid />
         </span>
@@ -64,7 +81,8 @@ const UserModal = ({ setModal }) => {
             onClick={() => setModal(false)}
             className="flex items-center gap-2 text-gray-500 hover:text-black/70"
             key={i}
-            to={link.path}>
+            to={link.path}
+          >
             <span className="text-2xl">{link.icon}</span>
             <h2 className="text-md">{link.title}</h2>
           </Link>
@@ -72,9 +90,10 @@ const UserModal = ({ setModal }) => {
       </div>
       <button
         onClick={logout}
-        className="flex flex-col pt-5 cursor-pointer hover:text-black/70">
+        className="flex flex-col pt-5 cursor-pointer hover:text-black/70"
+      >
         Sign Out
-        <span className="text-sm">{secretEmail(currentUser?.email)}</span>
+        <span className="text-sm">{secretEmail(currentUser?.email || "")}</span>
       </button>
     </section>
   );

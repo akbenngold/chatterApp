@@ -1,10 +1,12 @@
-export const secretEmail = (email) => {
+// Function to mask part of an email address
+export const secretEmail = (email: string): string => {
   const [username, domain] = email.split("@");
   const secretUser = username.substring(0, 2) + "*".repeat(username.length - 2);
   return `${secretUser}@${domain}`;
 };
 
-export const readTime = (desc) => {
+// Function to calculate estimated reading time of HTML content
+export const readTime = (desc: { __html: string }): number => {
   const averageReading = 225;
 
   const div = document.createElement("div");
@@ -15,7 +17,8 @@ export const readTime = (desc) => {
   return Math.ceil(words.length / averageReading);
 };
 
-export const formatNum = (num) => {
+// Function to format a number into a human-readable string
+export const formatNum = (num: number): string => {
   if (num >= 1e9) {
     return (num / 1e9).toFixed(1) + "B";
   } else if (num >= 1e6) {

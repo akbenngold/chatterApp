@@ -1,15 +1,31 @@
-import { collection, onSnapshot, query } from "firebase/firestore";
+import {
+  collection,
+  onSnapshot,
+  query,
+  QuerySnapshot,
+  DocumentData,
+} from "firebase/firestore";
 import React, { useEffect, useState } from "react";
-import { db } from "../../firebase/firebase";
+import { db } from "../../firebase/firebase.js";
 
-const useSingleFetch = (collectionName, id, subCol) => {
-  const [data, setData] = useState("");
-  const [loading, setLoading] = useState(true);
+interface FetchData {
+  id: string;
+  [key: string]: any; // Allows for additional properties of unknown shape
+}
+
+const useSingleFetch = (
+  collectionName: string,
+  id: string | undefined,
+  subCol: string
+) => {
+  const [data, setData] = useState<FetchData[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
   useEffect(() => {
     const getSingleData = () => {
       if (id) {
         const postRef = query(collection(db, collectionName, id, subCol));
-        onSnapshot(postRef, (snapshot) => {
+        onSnapshot(postRef, (snapshot: QuerySnapshot<DocumentData>) => {
           setData(
             snapshot.docs.map((doc) => ({
               ...doc.data(),
@@ -21,7 +37,8 @@ const useSingleFetch = (collectionName, id, subCol) => {
       }
     };
     getSingleData();
-  }, [db, id]);
+  }, [db, id, collectionName, subCol]);
+
   return {
     data,
     loading,

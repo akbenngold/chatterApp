@@ -1,13 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, FormEvent } from "react";
 import Input from "../../../utils/Input";
 import { MdKeyboardArrowLeft } from "react-icons/md";
 import { toast } from "react-toastify";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth, db } from "../../../firebase/firebase";
+import { auth, db } from "../../../firebase/firebase.js";
 import { useNavigate } from "react-router-dom";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 
-const SignUp = ({ setSignReq, setModal }) => {
+// Define the props for the SignUp component
+interface SignUpProps {
+  setSignReq: React.Dispatch<React.SetStateAction<string>>;
+  setModal: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const SignUp: React.FC<SignUpProps> = ({ setSignReq, setModal }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
@@ -17,15 +23,20 @@ const SignUp = ({ setSignReq, setModal }) => {
     rePassword: "",
   });
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (form[("username", "email", "password", "rePassword")] === "") {
+    if (!form.username || !form.email || !form.password || !form.rePassword) {
       toast.error("All fields are required");
-    } else if (form["password"] !== form["rePassword"]) {
+      return;
+    }
+
+    if (form.password !== form.rePassword) {
       toast.error("Your passwords are not matching!!");
       return;
-    } else {
-      setLoading(true);
+    }
+
+    setLoading(true);
+    try {
       const { user } = await createUserWithEmailAndPassword(
         auth,
         form.email,
@@ -47,8 +58,11 @@ const SignUp = ({ setSignReq, setModal }) => {
         navigate("/");
         toast.success("New Account has been Created");
         setModal(false);
-        setLoading(false);
       }
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -72,14 +86,16 @@ const SignUp = ({ setSignReq, setModal }) => {
         <button
           className={`first-letter:px-4 py-1 text-sm rounded-full bg-green-700
         hover:bg-green-800 text-white w-fit mx-auto
-        ${loading ? "opacity-50 pointer-events-none" : ""}`}>
+        ${loading ? "opacity-50 pointer-events-none" : ""}`}
+        >
           Sign Up
         </button>
       </form>
       <button
         onClick={() => setSignReq("")}
         className="mt-5 text-sm text-green-600 hover:text-green-700
-      flex items-center mx-auto">
+      flex items-center mx-auto"
+      >
         <MdKeyboardArrowLeft />
         All sign Up Options
       </button>
