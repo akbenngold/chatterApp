@@ -129,7 +129,7 @@ const Profile: React.FC = () => {
             <p className="text-gray-500 first-letter:uppercase text-sm">
               {getUserData?.bio}
             </p>
-            {currentUser?.uid === getUserData?.uid && (
+            {currentUser && (
               <button
                 onClick={() => setEditModal(true)}
                 className="text-green-700 pt-6 text-sm w-fit"
