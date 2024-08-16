@@ -29,7 +29,7 @@ const Trending: React.FC = () => {
           <span>
             <BsGraphUpArrow />
           </span>
-          <h2>Trending on Medium</h2>
+          <h2>Trending on Chatter</h2>
         </div>
         <div className="grid grid-cols-card gap-3">
           {getTrending &&
